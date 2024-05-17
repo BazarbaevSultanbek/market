@@ -1,97 +1,115 @@
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
-import Pagination from '../../Pagination'
-import Search from 'antd/es/transfer/search'
-import { Input, Menu, Switch } from 'antd'
-import { Button } from '@mui/material'
-import LaunchIcon from '@mui/icons-material/Launch';
-import { AppstoreOutlined, AudioOutlined, ExportOutlined, LinkOutlined, MailOutlined, MoonOutlined, RadiusSettingOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons'
-
-import './MainPage.scss'
-import { useDispatch } from 'react-redux'
-import { searchCountry } from '../../store/Reducers/Reducer'
-
-
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+import { filterCategory, searchCountry, setUpStates } from '../../store/Reducers/Reducer';
+import { Button, Card, Group, Image, Modal, Pagination, Text, Avatar, Stack } from '@mantine/core';
+import { Carousel } from '@mantine/carousel';
+import '@mantine/carousel/styles.css';
+import { Input } from 'antd';
+import { ExportOutlined, MoonOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
+import './MainPage.scss';
+import { useDisclosure } from '@mantine/hooks';
+import { IconAt } from '@tabler/icons-react';
 
 function MainPage({ selectedUser }) {
-    const [products, setProducts] = useState([])
-    const [currentPage, setCurrentPage] = useState(1)
-    const [productsPerPage, setProductsPerPage] = useState(9)
-    const [categories, setCategories] = useState([])
-    const [current, setCurrent] = useState('1');
     const { Search } = Input;
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+    const products = useSelector((state) => state.products.products);
+    const categories = useSelector((state) => state.products.categories);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [productsPerPage] = useState(9);
+    const [active, setActive] = useState('All');
+    const [opened, { open, close }] = useDisclosure(false);
 
-    const handleSearch = (e) => {
-        dispatch(searchCountry({ text: e.target.value }));
-    };
+    // For pagination
+    const indexOfLast = currentPage * productsPerPage;
+    const indexOfFirst = indexOfLast - productsPerPage;
+    const currentProducts = products.slice(indexOfFirst, indexOfLast);
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    const suffix = (
-        <AudioOutlined
-            style={{
-                fontSize: 16,
-                color: '#1677ff',
-            }}
-        />
-    );
-
+    // Getting products and categories
     useEffect(() => {
         const fetchData = async () => {
-            const response = await axios.get('https://api.escuelajs.co/api/v1/products')
-            const res = await axios.get('https://api.escuelajs.co/api/v1/categories')
-            setCategories(res.data)
-            setProducts(response.data)
-        }
-        fetchData()
-    }, [])
+            const response = await axios.get('https://api.escuelajs.co/api/v1/products');
+            const res = await axios.get('https://api.escuelajs.co/api/v1/categories');
+            dispatch(setUpStates({ products: response.data, categories: res.data }));
+        };
+        fetchData();
+    }, [dispatch]);
 
+    const data = categories.map((item, index) => ({
+        link: '',
+        label: item.name,
+        id: index,
+    }));
 
-    const items = [
-        {
-            key: 'sub1',
-            label: 'Categories',
-            icon: <MailOutlined />,
-            children: categories.map(item => ({
-                key: item.id,
-                label: item.name,
-            }))
-        },
-    ];
+    const handleCategoryClick = (categoryName) => {
+        setActive(categoryName);
+        dispatch(filterCategory({ category: categoryName }));
+    };
 
-    const indexOfLast = currentPage * productsPerPage
-    const indexOfFirst = indexOfLast - productsPerPage
-    const currentProducts = products.slice(indexOfFirst, indexOfLast)
+    const links = [
+        <a
+            className={'link'}
+            data-active={active === 'All' || undefined}
+            href=""
+            key="All"
+            onClick={(e) => { e.preventDefault(); handleCategoryClick('All'); }}
+        >
+            <span>All</span>
+        </a>
+    ].concat(data.map((item) => (
+        <a
+            className={'link'}
+            data-active={item.label === active || undefined}
+            href=""
+            key={item.label}
+            onClick={(e) => { e.preventDefault(); handleCategoryClick(item.label); }}
+        >
+            <span>{item.label}</span>
+        </a>
+    )));
 
-
-    const paginate = (pageNumber) => { setCurrentPage(pageNumber) }
-
-
+    // Search functions in dispatch
+    const handleSearch = (value) => {
+        dispatch(searchCountry({ text: value }));
+    };
 
     return (
         <div className='MainPage'>
+            <Modal opened={opened} onClose={close} title="Profile">
+                <Stack align='center'>
+                    <div className="Modal-flex-comp">
+                        <Avatar src={selectedUser.avatar} size={50} radius="xl" />
+                        <Text>Name: {selectedUser.name}</Text>
+                    </div>
+                    <div>                        
+                        <div className='Modal-flex-comp'>
+                            <Text>Email: </Text>
+                            <Input placeholder="Your email" leftSection={<IconAt size={16} />} value={selectedUser.email} />
+                        </div>
+                        <div className='Modal-flex-comp'>
+                            <Text>Password:</Text>
+                            <Input placeholder="Your password" value={selectedUser.password} />
+                        </div>
+
+                        <Text>Role: {selectedUser.role}</Text>
+                        <Text>Created At: {new Date(selectedUser.creationAt).toLocaleDateString()}</Text>
+                        <Text>Updated At: {new Date(selectedUser.updatedAt).toLocaleDateString()}</Text>
+                    </div>
+                </Stack>
+            </Modal>
             <div className="MainPage-header-navi">
                 <div className='MainPage-header-navi-logo'>
                     <h2>CIO Market</h2>
                 </div>
                 <div className='MainPage-header-navi-search'>
-                    <Search
-                        placeholder="Search products"
-                        enterButton="Search"
-                        size="large"
-                        suffix={suffix}
-                        onSearch={handleSearch}
-                    />
-                    <div>
-                        <ul>
-                            <li>Home</li>
-                            <li>Store</li>
-                            <li><span>Cart</span><ShoppingCartOutlined /></li>
-                        </ul>
-                    </div>
+                    <Search placeholder="Search products" enterButton="Search" size="large" onSearch={handleSearch} />
+                    <div><ul><li>Home</li><li>Store</li><li><span>Cart</span><ShoppingCartOutlined /></li></ul></div>
                 </div>
                 <div className='MainPage-header-navi-profile'>
-                    <button><UserOutlined /></button>
+                    <button onClick={open}><UserOutlined /></button>
                     <button><MoonOutlined /></button>
                 </div>
             </div>
@@ -100,45 +118,67 @@ function MainPage({ selectedUser }) {
                     <div className="MainPage-block-menu">
                         <br />
                         <br />
-                        <Menu
-                            theme={'#2e2e2e'}
-                            style={{
-                                width: 256,
-                                color: 'white'
-                            }}
-                            defaultOpenKeys={['sub1']}
-                            selectedKeys={[current]}
-                            mode="inline"
-                            items={items}
-                            onClick={(e) => setCurrent(e.key)}
-                        />
+                        <nav className={'navbar'}>
+                            <div className={'navbarMain'}>
+                                <Group className={'navbarheader'} justify="space-between">
+                                </Group>
+                                {links}
+                            </div>
+                        </nav>
                     </div>
                     <div className="MainPage-block-products">
-                        <div className='MainPage-block-products-items'>
-                            {
-                                currentProducts.map(product => {
-                                    return <div key={product.id}>
-                                        <img src={Array.isArray(product.images) ? product.images[0] : ''} alt="" />
-                                        <div>
-                                            <h4>{product.title}</h4>
-                                            <span id='categories'>Category: {product.category.name}</span>
-                                            <p className='description'>{product.description}</p>
-                                            <nav id='productNavi'>
-                                                <p className='price'>{product.price}$</p>
-                                                <Button type="primary" style={{ minWidth: '40px' }}><ExportOutlined /></Button>
-                                                <Button variant="contained" style={{ textTransform: 'none', display: 'flex', gap: '10px' }}><ShoppingCartOutlined style={{ fontSize: '20px' }} /> Add to Cart</Button>
-                                            </nav>
-                                        </div>
+                        <div className="MainPage-block-products-render">
+                            {currentProducts.map(product => (
+                                <Card shadow="sm" padding="lg" radius="md" style={{ width: "300px", height: '550px' }} key={product.id}>
+                                    <Carousel
+                                        withIndicators
+                                        withControls={true}
+                                        loop={true}
+                                        height={250}
+                                        slideGap="md"
+                                        align="start"
+                                    >
+                                        {product.images.map((img, index) => (
+                                            <Carousel.Slide key={index}>
+                                                <Image
+                                                    src={img}
+                                                    height={250}
+                                                    width={'300px !important'}
+                                                    alt="product"
+                                                />
+                                            </Carousel.Slide>
+                                        ))}
+                                    </Carousel>
+
+                                    <div className='MainPage-block-products-info'>
+                                        <Text fw={500} color={'#abb5b9'} id="title">{product.title}</Text>
+                                        <Text size="sm" c="dimmed" id='categories' mt={10} mb={10}>Category: {product.category.name}</Text>
+                                        <Text size="sm" c="dimmed" id='description'>{product.description}</Text>
+                                        <Group justify="space-around" mt="30" mb="xs">
+                                            <p className='price'>{product.price}$</p>
+                                            <Button variant="filled" color="cyan" style={{ minWidth: '40px' }}><ExportOutlined /></Button>
+                                            <Button variant="filled" style={{ textTransform: 'none', display: 'flex', gap: '10px' }}><ShoppingCartOutlined style={{ fontSize: '20px' }} /> Add to Cart</Button>
+                                        </Group>
                                     </div>
-                                })
-                            }
+                                </Card>
+                            ))}
                         </div>
-                        <Pagination PostsPerPage={productsPerPage} totalPosts={products.length} paginate={paginate} />
+
+                        <Pagination
+                            total={Math.ceil(products.length / productsPerPage)}
+                            page={currentPage}
+                            onChange={paginate}
+                            color="#1677ff"
+                            size="lg"
+                            radius="md"
+                            className="pagination-control"
+                        />
                     </div>
                 </div>
+
             </div>
         </div>
-    )
+    );
 }
 
-export default MainPage
+export default MainPage;
