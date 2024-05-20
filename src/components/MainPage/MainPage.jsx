@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { filterCategory, searchCountry, setUpStates } from '../../store/Reducers/Reducer';
+import { filterCategory, searchCountry, setTheme, setUpStates } from '../../store/Reducers/Reducer';
 import { Button, Card, Group, Image, Modal, Pagination, Text, Avatar, Stack } from '@mantine/core';
 import { Carousel } from '@mantine/carousel';
 import '@mantine/carousel/styles.css';
 import { Input } from 'antd';
-import { ExportOutlined, MoonOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
+import { ExportOutlined, MoonOutlined, RadiusSettingOutlined, ShoppingCartOutlined, SunOutlined, UserOutlined } from '@ant-design/icons';
 import './MainPage.scss';
 import { useDisclosure } from '@mantine/hooks';
-import { IconAt } from '@tabler/icons-react';
+import { Link } from 'react-router-dom';
 
 function MainPage({ selectedUser }) {
     const { Search } = Input;
@@ -27,13 +27,15 @@ function MainPage({ selectedUser }) {
     const indexOfFirst = indexOfLast - productsPerPage;
     const currentProducts = products.slice(indexOfFirst, indexOfLast);
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    const mode = useSelector(state => state.products.isDarkMode)
 
     // Getting products and categories
     useEffect(() => {
         const fetchData = async () => {
             const response = await axios.get('https://api.escuelajs.co/api/v1/products');
             const res = await axios.get('https://api.escuelajs.co/api/v1/categories');
-            dispatch(setUpStates({ products: response.data, categories: res.data }));
+            const users = await axios.get('https://api.escuelajs.co/api/v1/users?limit=10')
+            dispatch(setUpStates({ products: response.data, categories: res.data, users: users.data }));
         };
         fetchData();
     }, [dispatch]);
@@ -76,22 +78,30 @@ function MainPage({ selectedUser }) {
         dispatch(searchCountry({ text: value }));
     };
 
+
+
+    const ChangeDarkMode = () => {
+        dispatch(setTheme({ mode: !mode }));
+    };
+
+
     return (
         <div className='MainPage'>
-            <Modal opened={opened} onClose={close} title="Profile">
+
+
+
+            <Modal opened={opened} onClose={close} title="Profile" id={mode ? 'Dark_Modal' : 'Light_Modal'}>
                 <Stack align='center'>
                     <div className="Modal-flex-comp">
                         <Avatar src={selectedUser.avatar} size={50} radius="xl" />
-                        <Text>Name: {selectedUser.name}</Text>
                     </div>
-                    <div>                        
+                    <div>
+                        <Text>Name: {selectedUser.name}</Text>
                         <div className='Modal-flex-comp'>
-                            <Text>Email: </Text>
-                            <Input placeholder="Your email" leftSection={<IconAt size={16} />} value={selectedUser.email} />
+                            <Text>Email: {selectedUser.email}</Text>
                         </div>
                         <div className='Modal-flex-comp'>
-                            <Text>Password:</Text>
-                            <Input placeholder="Your password" value={selectedUser.password} />
+                            <Text>Password: {selectedUser.password}</Text>
                         </div>
 
                         <Text>Role: {selectedUser.role}</Text>
@@ -100,7 +110,11 @@ function MainPage({ selectedUser }) {
                     </div>
                 </Stack>
             </Modal>
-            <div className="MainPage-header-navi">
+
+
+
+
+            <div className={mode ? "MainPage-header-navi" : 'MainPage-header-navi-light'}>
                 <div className='MainPage-header-navi-logo'>
                     <h2>CIO Market</h2>
                 </div>
@@ -110,11 +124,16 @@ function MainPage({ selectedUser }) {
                 </div>
                 <div className='MainPage-header-navi-profile'>
                     <button onClick={open}><UserOutlined /></button>
-                    <button><MoonOutlined /></button>
+                    <button onClick={() => ChangeDarkMode()}>{mode ? <SunOutlined /> : <MoonOutlined />}</button>
+                    <Link to={'/settings'}><button><RadiusSettingOutlined /></button></Link>
                 </div>
             </div>
+
+
+
             <div className="container">
-                <div className="MainPage-block">
+                <div className={mode ? "MainPage-block" : "MainPage-block-light"}>
+
                     <div className="MainPage-block-menu">
                         <br />
                         <br />
@@ -154,7 +173,7 @@ function MainPage({ selectedUser }) {
                                         <Text fw={500} color={'#abb5b9'} id="title">{product.title}</Text>
                                         <Text size="sm" c="dimmed" id='categories' mt={10} mb={10}>Category: {product.category.name}</Text>
                                         <Text size="sm" c="dimmed" id='description'>{product.description}</Text>
-                                        <Group justify="space-around" mt="30" mb="xs">
+                                        <Group justify="center" mt="30" mb="xs">
                                             <p className='price'>{product.price}$</p>
                                             <Button variant="filled" color="cyan" style={{ minWidth: '40px' }}><ExportOutlined /></Button>
                                             <Button variant="filled" style={{ textTransform: 'none', display: 'flex', gap: '10px' }}><ShoppingCartOutlined style={{ fontSize: '20px' }} /> Add to Cart</Button>

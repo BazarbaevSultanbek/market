@@ -1,0 +1,193 @@
+.Users {
+    .container {
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .Users-block {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .Users-block-users,
+    .Users-block-categories,
+    .Users-block-products {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+    }
+
+    .edit-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: rgb(0, 98, 255);
+        outline: none;
+    }
+
+    .delete-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: red;
+        outline: none;
+    }
+}
+
+.Users-modul-block {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    background-color: rgba(51, 49, 49, 0.74);
+    z-index: 2;
+}
+
+.Users-modul-block-inner {
+    position: relative;
+    background-color: whitesmoke;
+    width: 350px;
+    height: 450px;
+    border-radius: 5px;
+    padding: 10px 15px;
+    display: flex;
+    gap: 30px;
+    flex-direction: column;
+
+    input {
+        padding: 5px;
+        outline: none;
+    }
+
+    div {
+        display: flex;
+        justify-content: space-around;
+
+        button {
+            width: 100px;
+
+        }
+    }
+}
+
+
+
+
+
+.Categories {
+    margin-top: 40px;
+
+    .container {
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .Categories-block {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .Categories-block-users,
+    .Categories-block-categories,
+    .Categories-block-products {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+    }
+
+    .edit-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: rgb(0, 98, 255);
+        outline: none;
+    }
+
+    .delete-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: red;
+        outline: none;
+    }
+}
+
+.Categories-modul-block {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    background-color: rgba(51, 49, 49, 0.74);
+    z-index: 2;
+}
+
+.Categories-modul-block-inner {
+    position: relative;
+    background-color: whitesmoke;
+    width: 350px;
+    height: 350px;
+    border-radius: 5px;
+    padding: 10px 15px;
+    display: flex;
+    gap: 50px;
+    flex-direction: column;
+
+    input {
+        padding: 5px;
+        outline: none;
+    }
+
+    div {
+        display: flex;
+        justify-content: space-around;
+
+        button {
+            width: 100px;
+
+        }
+    }
+}

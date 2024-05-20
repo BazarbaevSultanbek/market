@@ -5,6 +5,7 @@ import MainPage from './components/MainPage/MainPage'
 import { useState } from 'react'
 import { MantineProvider } from '@mantine/core'
 import '@mantine/core/styles.css';
+import Settings from './components/Settings/Settings'
 function App() {
 
   const [selectedUser, setSelectedUser] = useState()
@@ -16,6 +17,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Login setSelectedUser={setSelectedUser} />} />
           <Route path='/main' element={<MainPage selectedUser={selectedUser} />} />
+          <Route path='/settings' element={<Settings />} />
         </Routes>
       </MantineProvider>
     </BrowserRouter>
