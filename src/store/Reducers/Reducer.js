@@ -73,7 +73,7 @@ const productsSlice = createSlice({
 
         //// Category controlling
 
-        addCategoryInFetch(state, action) {
+        addCategory(state, action) {
             return {
                 ...state,
                 categories: [
@@ -86,6 +86,24 @@ const productsSlice = createSlice({
                 ]
             };
         },
+
+
+        deleteCategory(state, action) {
+            return {
+                ...state,
+                categories: state.categories.filter((category) => category.id !== action.payload.id),
+            }
+        },
+        /// end code
+
+        /// Product controlling
+
+        deleteProduct(state, action) {
+            return {
+                ...state,
+                products: state.products.filter((product) => product.id !== action.payload.id),
+            }
+        }
     },
 });
 
@@ -95,5 +113,5 @@ const productsSlice = createSlice({
 
 
 
-export const { setUpStates, searchCountry, filterCategory, setTheme, deleteUser, addUser, addCategoryInFetch } = productsSlice.actions;
+export const { setUpStates, searchCountry, filterCategory, setTheme, deleteUser, addUser, addCategory, deleteCategory, deleteProduct } = productsSlice.actions;
 export default productsSlice.reducer;

@@ -19,6 +19,10 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
+    .Users-block-users-navi {
+        margin: 40px 0;
+    }
+
     .table {
         width: 100%;
         border-collapse: collapse;
@@ -119,6 +123,10 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
+    .Categories-block-users-navi {
+        margin: 40px 0;
+    }
+
     .table {
         width: 100%;
         border-collapse: collapse;
@@ -189,5 +197,110 @@
             width: 100px;
 
         }
+    }
+}
+
+
+.Products {
+    margin-top: 40px;
+
+    .container {
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .Products-block {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .Products-block-users,
+    .Products-block-categories,
+    .Products-block-products {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .Products-block-users-navi {
+        margin: 40px 0;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+    }
+
+    .edit-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: rgb(0, 98, 255);
+        outline: none;
+    }
+
+    .delete-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: red;
+        outline: none;
+    }
+}
+
+.Products-modul-block {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    background-color: rgba(51, 49, 49, 0.74);
+    z-index: 2;
+}
+
+.Products-modul-block-inner {
+    position: relative;
+    background-color: whitesmoke;
+    width: 350px;
+    height: 500px;
+    border-radius: 5px;
+    padding: 10px 15px;
+    display: flex;
+    gap: 50px;
+    flex-direction: column;
+
+    input {
+        padding: 5px;
+        outline: none;
+    }
+
+    div {
+        display: flex;
+        justify-content: space-around;
+
+        button {
+            width: 100px;
+
+        }
+    }
+
+    select {
+        outline: none;
     }
 }
