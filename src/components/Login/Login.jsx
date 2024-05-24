@@ -4,44 +4,64 @@ import { Button, Input } from 'antd';
 import axios from 'axios';
 import { useNavigate } from 'react-router';
 import './Login.scss';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCurrentUser } from '../../store/Reducers/Reducer';
 
-function Login({ setSelectedUser }) {
-    const { control, handleSubmit, formState } = useForm();
-    const { errors } = formState;
+function Login() {
+    const { control, handleSubmit, formState: { errors } } = useForm();
     const [loading, setLoading] = useState(false);
-    const [users, setUsers] = useState([])
-    const navigate = useNavigate()
-
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const mode = useSelector(state => state.products.isDarkMode);
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
-            const response = await axios.get('https://api.escuelajs.co/api/v1/users?limit=50');
-            setUsers(response.data)
-            setLoading(false);
+            try {
+                await axios.get('https://api.escuelajs.co/api/v1/users?limit=50');
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                setLoading(false);
+            }
         };
         fetchData();
     }, []);
 
+    const onSubmit = async (data) => {
+        setLoading(true);
+        try {
+            const response = await axios.post('https://api.escuelajs.co/api/v1/auth/login', {
+                email: data.email,
+                password: data.password
+            });
 
+            if (response.status === 200 || response.status === 201) {
+                const token = response.data.access_token;
+                const profileResponse = await axios.get('https://api.escuelajs.co/api/v1/auth/profile', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
 
-    const onSubmit = (data) => {
-        users.map(user => {
-            if (user.email === data.email && user.password === data.password) {
-                navigate('/main');
-                setSelectedUser(user)
+                dispatch(setCurrentUser(profileResponse.data));
+                navigate('/');
+            } else {
+                alert(`Unexpected response status: ${response.status}`);
             }
-            else {
-                return user
+        } catch (error) {
+            console.error('Login Error:', error);
+            if (error.response) {
+                alert(`Login failed: ${error.response.data.message || 'Unknown error'}`);
+            } else {
+                alert('Login failed: Network or server error');
             }
-        })
+        } finally {
+            setLoading(false);
+        }
     };
 
-    if (loading) {
-        return <h1 className='loading'>Loading...</h1>
-    }
-
     return (
-        <div className='Login'>
+        <div className={mode ? 'Login' : 'Login-light'}>
             <div className="container">
                 <div className="Login-block">
                     <form onSubmit={handleSubmit(onSubmit)} noValidate className="Login-block-form">
@@ -84,7 +104,7 @@ function Login({ setSelectedUser }) {
                                 </>
                             )}
                         />
-                        <Button type="primary" htmlType="submit">Login</Button>
+                        <Button type="primary" htmlType="submit" disabled={loading}>Login</Button>
                     </form>
                 </div>
             </div>

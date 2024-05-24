@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Group, Avatar, Text, Accordion, Button } from "@mantine/core";
 import { useDispatch, useSelector } from 'react-redux';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { addUser, deleteCategory, deleteUser } from '../../store/Reducers/Reducer';
+import { addProduct, addUser, deleteCategory, deleteProduct, deleteUser } from '../../store/Reducers/Reducer';
 import axios from 'axios';
 import '@mantine/carousel/styles.css';
 import './Settings.scss';
@@ -31,7 +31,7 @@ const Users = () => {
   const dispatch = useDispatch();
 
 
-  const addUserInFetch = (user) => async (dispatch) => {
+  const addUserInFetch = (user) => async () => {
     try {
       const response = await axios.post('https://api.escuelajs.co/api/v1/users', JSON.stringify(user));
       if (response.data) {
@@ -45,7 +45,7 @@ const Users = () => {
 
 
 
-  const deleteUserinFetch = (id) => async (dispatch) => {
+  const deleteUserinFetch = (id) => async (disatch) => {
     try {
       const response = await axios.delete(`https://api.escuelajs.co/api/v1/users/${id}`);
       if (response.status === 200) {
@@ -181,12 +181,13 @@ const Categories = () => {
 
 
   /// delete Category
-  const delCategoryinFetch = (id) => async (dispatch) => {
+  const delCategoryinFetch = (id) => async () => {
     try {
       const response = await axios.delete(`https://api.escuelajs.co/api/v1/categories/${id}`);
       if (response.status === 200) {
         dispatch(deleteCategory({ id }));
       }
+      console.log(response.status);
     } catch (error) {
       console.error('Failed to delete category:', error);
     }
@@ -246,77 +247,95 @@ const Categories = () => {
 
 
 const Products = () => {
-  const productsState = useSelector(state => state.products.products)
-  const categories = useSelector(state => state.products.categories)
-  const [showModule, setShowModule] = useState(false)
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [price, setPrice] = useState()
-  const [category, setCategory] = useState('')
+  const productsState = useSelector(state => state.products.products);
+  const dispatch = useDispatch();
+  const [showModule, setShowModule] = useState(false);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
+  const [categoryId, setCategoryId] = useState('');
+  const [images, setImages] = useState([]);
 
+  const addProductinFetch = (newProduct) => async (dispatch) => {
+    try {
+      const response = await axios.post('https://api.escuelajs.co/api/v1/products/', newProduct);
+      if (response.status === 200 || response.status === 201) {
+        dispatch(addProduct({ newProduct: response.data }));
+      }
+    } catch (error) {
+      console.error('Failed to add product:', error);
+    }
+  };
 
-  const deleteProductinFetch = (id) => async () => {
+  const handleAddProduct = () => {
+    const newProduct = {
+      title: title,
+      description: description,
+      price: price,
+      categoryId: categoryId,
+      images: images,
+    };
+    dispatch(addProductinFetch(newProduct));
+    setShowModule(false);
+    setTitle('');
+    setDescription('');
+    setPrice('');
+    setCategoryId('');
+    setImages([]);
+  };
+
+  const delProductinFetch = (id) => async (dispatch) => {
     try {
       const response = await axios.delete(`https://api.escuelajs.co/api/v1/products/${id}`);
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         dispatch(deleteProduct({ id }));
       }
     } catch (error) {
-      console.error('Failed to delete category:', error);
+      console.error('Failed to delete product:', error);
     }
-  }
-
-  const addProductinFetch = () => async () => {
-
-  }
-
-
+  };
 
   return (
     <div className="Products">
-
-
-
-      <div className="Products-modul" style={{ display: showModule ? 'block' : 'none' }}>
-        <div className="Products-modul-block">
-          <div className="Products-modul-block-inner">
-            <h1>New Product</h1>
-            <input
-              type="text"
-              name="title"
-              placeholder='Title'
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-            <input
-              type="text"
-              name='description'
-              placeholder='Description'
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-            <input
-              type="number"
-              name='price'
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            />
-            <select name="category" id="category" onChange={(e) => setCategory(e)}>
-              {
-                categories.map((category) => {
-                  return <option value={category.id} key={category}>{category.name}</option>
-                })
-              }
-            </select>
-            <div>
-              <Button variant="filled" color="yellow" onClick={() => setShowModule(false)}>Cancel</Button>
-              <Button variant="filled" color="grape" >Add New</Button>
-            </div>
-          </div>
-        </div>
+      <div className="Products-header">
+        <h2>Products</h2>        
       </div>
-
-
+      {showModule && (
+        <div className="Products-add-module">
+          <h3>Add Product</h3>
+          <input
+            type="text"
+            placeholder="Product title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+          <input
+            type="number"
+            placeholder="Price"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+          />
+          <input
+            type="number"
+            placeholder="Category ID"
+            value={categoryId}
+            onChange={(e) => setCategoryId(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Images URLs (comma-separated)"
+            value={images}
+            onChange={(e) => setImages(e.target.value.split(','))}
+          />
+          <Button variant="outline" color="blue" onClick={handleAddProduct}>Add</Button>
+        </div>
+      )}
 
       <div className="container">
         <div className="Products-block">
@@ -345,7 +364,7 @@ const Products = () => {
                     <td>{item.category.name}</td>
                     <td>{item.id}</td>
                     <td>
-                      <button className="delete-button" onClick={() => deleteProductinFetch(item.id)}>
+                      <button className="delete-button" onClick={() => delProductinFetch(item.id)}>
                         <DeleteOutlined />
                       </button>
                     </td>
@@ -356,6 +375,6 @@ const Products = () => {
           </div>
         </div>
       </div>
-    </div>
-  )
-}
+    </div >
+  );
+};

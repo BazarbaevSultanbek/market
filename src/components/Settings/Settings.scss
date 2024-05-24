@@ -198,6 +198,11 @@
 
         }
     }
+
+    h4 {
+        margin: 0;
+        padding: 0;
+    }
 }
 
 
@@ -278,11 +283,12 @@
     position: relative;
     background-color: whitesmoke;
     width: 350px;
-    height: 500px;
+    height: 550px;
     border-radius: 5px;
     padding: 10px 15px;
     display: flex;
-    gap: 50px;
+    gap: 40px;
+    overflow: scroll;
     flex-direction: column;
 
     input {

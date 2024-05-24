@@ -1,28 +1,30 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import './App.scss'
-import Login from './components/Login/Login'
-import MainPage from './components/MainPage/MainPage'
-import { useState } from 'react'
-import { MantineProvider } from '@mantine/core'
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { MantineProvider } from '@mantine/core';
+import MainPage from './components/MainPage/MainPage';
+import Login from './components/Login/Login';
+import Settings from './components/Settings/Settings';
+import Cart from './components/Cart/Cart';
 import '@mantine/core/styles.css';
-import Settings from './components/Settings/Settings'
-function App() {
+import './App.scss';
 
-  const [selectedUser, setSelectedUser] = useState()
+function App() {
+  
 
 
   return (
-    <BrowserRouter>
-      <MantineProvider>
-        <Routes>
-          <Route path="/" element={<Login setSelectedUser={setSelectedUser} />} />
-          <Route path='/main' element={<MainPage selectedUser={selectedUser} />} />
-          <Route path='/settings' element={<Settings />} />
-        </Routes>
-      </MantineProvider>
-    </BrowserRouter>
-  )
+    <>
+      <BrowserRouter>
+        <MantineProvider>
+          <Routes>
+            <Route path="./login" element={<Login />} />
+            <Route path="*" element={<MainPage />} />
+            <Route path='./Cart' element={<Cart />} />
+            <Route path="/Settings" element={<Settings />} />
+          </Routes>
+        </MantineProvider>
+      </BrowserRouter>
+    </>
+  );
 }
 
-export default App
-
+export default App;

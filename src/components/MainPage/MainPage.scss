@@ -1,8 +1,3 @@
-body {
-    background: #242424;
-}
-
-
 /// Main Page modal started 
 
 .mantine-Modal-root {
@@ -81,6 +76,8 @@ body {
     background-color: #242424;
     border-bottom: 0.5px solid #3e3e3e;
     align-items: center;
+
+
 }
 
 .MainPage-header-navi-light {
@@ -89,7 +86,7 @@ body {
     padding: 10px 15px;
     box-shadow: 0px 10px 22px 12px rgba(0, 0, 0, 0.1);
     background-color: white;
-    border-bottom: 0.5px solid #3e3e3e;
+    border-bottom: 0.5px solid #cacaca;
     align-items: center;
 
     .MainPage-header-navi-logo {
@@ -121,22 +118,34 @@ body {
     .MainPage-header-navi-profile {
         button {
             border: none;
-            background: white;
             padding: 10px;
             border-radius: 2px;
             margin: 10px;
             font-size: 20px;
-            color: black;
             outline: none;
 
-            &:nth-child(1) {
-                background-color: #1677ff;
-                color: white;
-            }
+        }
 
-            &:nth-child(2) {
-                border: 1px solid #585858;
-            }
+        .login-btn {
+            background: #1677ff !important;
+            color: white;
+        }
+
+        .profile-btn {
+            background: #1677ff;
+            color: white;
+        }
+
+        .theme-btn {
+            border: 1px solid #585858;
+            color: black;
+            background: none;
+        }
+
+        .settings-btn {
+            background: none;
+            border: 1px solid #585858;
+            color: black;
         }
     }
 
@@ -167,22 +176,40 @@ body {
             font-weight: 600;
             gap: 5px;
         }
+
+        a {
+            text-decoration: none;
+        }
     }
 }
 
 .MainPage-header-navi-profile {
+    display: flex;
+    align-items: center;
     button {
         border: none;
-        background: #2e2e2e;
+        // background: #2e2e2e;
         padding: 10px;
         border-radius: 2px;
         margin: 10px;
         font-size: 20px;
         color: #e5e5e5;
+    }
 
-        &:nth-child(1) {
-            background-color: #1677ff;
-        }
+    .profile-btn {
+        background-color: #1677ff;
+        color: white;
+    }
+
+    .login-btn {
+        background-color: #1677ff !important;
+        color: white;
+    }
+
+    .theme-btn,
+    .settings-btn {
+        background-color: transparent;
+        border: 1px solid grey;
     }
 }
 
@@ -233,9 +260,12 @@ body {
             color: black;
         }
     }
+
+
 }
 
 .MainPage-block {
+    min-height: 100vh;
     display: flex;
     align-items: start;
     background: #242424;
@@ -308,6 +338,13 @@ body {
         text-overflow: ellipsis;
         overflow: hidden;
         width: 50px;
+    }
+
+    .navi-count {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
     }
 }
 

@@ -4,11 +4,13 @@ import axios from 'axios';
 const productsSlice = createSlice({
     name: 'products',
     initialState: {
+        currentUser: null,
         users: [],
         allProducts: [],
         products: [],
         categories: [],
         isDarkMode: false,
+        cart: []
     },
     reducers: {
         setUpStates(state, action) {
@@ -16,6 +18,9 @@ const productsSlice = createSlice({
             state.products = action.payload.products;
             state.categories = action.payload.categories;
             state.users = action.payload.users;
+        },
+        setCurrentUser(state, action) {
+            state.currentUser = action.payload;
         },
 
         searchCountry(state, action) {
@@ -38,6 +43,35 @@ const productsSlice = createSlice({
                 );
                 state.products = filteredProducts;
             }
+        },
+
+        /// cart functions 
+
+        addToCart(state, action) {
+            return {
+                ...state,
+                cart: [
+                    ...state.cart,
+                    {
+                        product: action.payload.product,
+                        quantity: action.payload.quantity,
+                    }
+                ]
+            }
+        },
+        updateQuantityPro(state, action) {
+            const item = state.cart.find(item => item.product.id === action.payload.id);
+            if (action.payload.status === 'plus') {
+                item.quantity++;
+            } else if (action.payload.status === 'minus') {
+                item.quantity--;
+                if (item.quantity <= 0) {
+                    state.cart = state.cart.filter(cartItem => cartItem.product.id !== action.payload.id);
+                }
+            }
+        },
+        resetCart(state, action) {
+            state.cart = [];
         },
 
 
@@ -98,12 +132,18 @@ const productsSlice = createSlice({
 
         /// Product controlling
 
+        addProduct(state, action) {
+            state.products.push(action.payload.newProduct);
+        },
+
         deleteProduct(state, action) {
             return {
                 ...state,
                 products: state.products.filter((product) => product.id !== action.payload.id),
             }
-        }
+        },
+
+
     },
 });
 
@@ -113,5 +153,5 @@ const productsSlice = createSlice({
 
 
 
-export const { setUpStates, searchCountry, filterCategory, setTheme, deleteUser, addUser, addCategory, deleteCategory, deleteProduct } = productsSlice.actions;
+export const { setUpStates,setCurrentUser, searchCountry, addProduct, filterCategory, setTheme, addToCart, resetCart, deleteUser, updateQuantityPro, addUser, addCategory, deleteCategory, deleteProduct } = productsSlice.actions;
 export default productsSlice.reducer;
